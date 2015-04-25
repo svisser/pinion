@@ -44,3 +44,17 @@ PACKET_TYPE_SUBMIT_JOB_LOW = 33
 PACKET_TYPE_SUBMIT_JOB_LOW_BG = 34
 PACKET_TYPE_SUBMIT_JOB_SCHED = 35
 PACKET_TYPE_SUBMIT_JOB_EPOCH = 36
+
+
+class Gearman(object):
+
+    def __init__(self, hosts):
+        self.hosts = hosts
+
+
+class Client(Gearman):
+    pass
+
+
+class Worker(Gearman):
+    pass
