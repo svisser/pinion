@@ -46,15 +46,24 @@ PACKET_TYPE_SUBMIT_JOB_SCHED = 35
 PACKET_TYPE_SUBMIT_JOB_EPOCH = 36
 
 
-class Gearman(object):
+
+class GearmanManager(object):
 
     def __init__(self, hosts):
         self.hosts = hosts
 
 
-class Client(Gearman):
+class GearmanClient(GearmanManager):
     pass
 
 
-class Worker(Gearman):
+class GearmanWorker(GearmanManager):
+    pass
+
+
+class GearmanConnection(object):
+    pass
+
+
+class GearmanJob(object):
     pass
