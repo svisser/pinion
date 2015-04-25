@@ -1,0 +1,6 @@
+__title__ = 'pinion'
+__version__ = '0.0.1'
+__author__ = 'Simeon Visser'
+__email__ = 'simeonvisser@gmail.com'
+__license__ = 'Apache 2.0'
+__copyright__ = 'Copyright 2015 Simeon Visser'
