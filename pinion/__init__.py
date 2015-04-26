@@ -102,6 +102,15 @@ def create_packet(packet_type, packet_data, is_response=False):
     return struct.pack(packet_format, magic_code, packet_type, packet_length, payload)
 
 
+class GearmanConnection(object):
+
+    def __init__(self, host, port=DEFAULT_GEARMAN_PORT):
+        self.host = host
+        self.port = port
+
+    def connect(self):
+        pass
+
 
 class GearmanException(Exception):
     pass
@@ -109,8 +118,11 @@ class GearmanException(Exception):
 
 class GearmanManager(object):
 
+    connection_class = GearmanConnection
+
     def __init__(self, hosts):
         self.hosts = parse_hosts(hosts)
+        self.connections = [self.connection_class(host) for host in self.hosts]
 
 
 class GearmanClient(GearmanManager):
@@ -167,12 +179,3 @@ class GearmanWorker(GearmanManager):
 
     def set_client_id(self, client_id):
         pass
-
-
-
-class GearmanConnection(object):
-    pass
-
-
-class GearmanJob(object):
-    pass
