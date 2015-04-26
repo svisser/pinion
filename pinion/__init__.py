@@ -70,9 +70,9 @@ def parse_hosts(hosts):
     for host in hosts:
         gearman_address, gearman_port = None, None
         try:
-            gearman_address = host.get('host')
-            gearman_port = host.get('port')
-        except (AttributeError, KeyError):
+            gearman_address = host['host']
+            gearman_port = host['port']
+        except (AttributeError, KeyError, TypeError):
             pass
         if gearman_address is None:
             try:
@@ -84,7 +84,7 @@ def parse_hosts(hosts):
                 gearman_address, _, gearman_port = host.partition(':')
             except AttributeError:
                 pass
-        result.append((gearman_address, int(gearman_port or GEARMAN_PORT)))
+        result.append({'host': gearman_address, 'port': int(gearman_port or GEARMAN_PORT)})
     return result
 
 
