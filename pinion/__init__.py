@@ -77,9 +77,7 @@ class GearmanManager(object):
                     gearman_address, _, gearman_port = host.partition(':')
                 except AttributeError:
                     pass
-            if not gearman_port:
-                gearman_port = GEARMAN_PORT
-            result.append((gearman_address, int(gearman_port)))
+            result.append((gearman_address, int(gearman_port or GEARMAN_PORT)))
         return result
 
 
