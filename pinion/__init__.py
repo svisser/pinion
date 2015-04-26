@@ -63,9 +63,15 @@ class GearmanManager(object):
         for host in hosts:
             gearman_address, gearman_port = None, None
             try:
-                gearman_address, gearman_port = host
-            except (TypeError, ValueError):
+                gearman_address = host.get('host')
+                gearman_port = host.get('port')
+            except (AttributeError, KeyError):
                 pass
+            if gearman_address is None:
+                try:
+                    gearman_address, gearman_port = host
+                except (TypeError, ValueError):
+                    pass
             if gearman_address is None:
                 try:
                     gearman_address, _, gearman_port = host.partition(':')

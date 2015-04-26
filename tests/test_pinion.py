@@ -10,6 +10,8 @@ class GearmanClientTestCase(unittest.TestCase):
         self.assertEqual(pinion.GearmanClient([("127.0.0.1", "4730")]).hosts, expected)
         self.assertEqual(pinion.GearmanClient(["127.0.0.1"]).hosts, expected)
         self.assertEqual(pinion.GearmanClient(["127.0.0.1:4730"]).hosts, expected)
+        self.assertEqual(pinion.GearmanClient([{'host': "127.0.0.1"}]).hosts, expected)
+        self.assertEqual(pinion.GearmanClient([{'host': "127.0.0.1", 'port': "4730"}]).hosts, expected)
 
 
 class GearmanWorkerTestCase(unittest.TestCase):
