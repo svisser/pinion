@@ -45,12 +45,32 @@ PACKET_TYPE_SUBMIT_JOB_LOW_BG = 34
 PACKET_TYPE_SUBMIT_JOB_SCHED = 35
 PACKET_TYPE_SUBMIT_JOB_EPOCH = 36
 
+GEARMAN_PORT = 4730
 
 
 class GearmanManager(object):
 
     def __init__(self, hosts):
-        self.hosts = hosts
+        self.hosts = self._parse_hosts(hosts)
+
+    @staticmethod
+    def _parse_hosts(hosts):
+        result = []
+        for host in hosts:
+            gearman_address, gearman_port = None, None
+            try:
+                gearman_address, gearman_port = host
+            except (TypeError, ValueError):
+                pass
+            if gearman_address is None:
+                try:
+                    gearman_address, _, gearman_port = host.partition(':')
+                except AttributeError:
+                    pass
+            if not gearman_port:
+                gearman_port = GEARMAN_PORT
+            result.append((gearman_address, int(gearman_port)))
+        return result
 
 
 class GearmanClient(GearmanManager):
