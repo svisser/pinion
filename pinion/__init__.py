@@ -63,6 +63,38 @@ SUBMIT_JOB_PACKET_TYPES = {
 }
 
 
+def parse_hosts(hosts):
+    result = []
+    for host in hosts:
+        gearman_address, gearman_port = None, None
+        try:
+            gearman_address = host.get('host')
+            gearman_port = host.get('port')
+        except (AttributeError, KeyError):
+            pass
+        if gearman_address is None:
+            try:
+                gearman_address, gearman_port = host
+            except (TypeError, ValueError):
+                pass
+        if gearman_address is None:
+            try:
+                gearman_address, _, gearman_port = host.partition(':')
+            except AttributeError:
+                pass
+        result.append((gearman_address, int(gearman_port or GEARMAN_PORT)))
+    return result
+
+
+def create_packet(packet_type, packet_data, is_response=False):
+    magic_code = MAGIC_CODE_RES if is_response else MAGIC_CODE_REQ
+    payload = NULL_BYTE.join(packet_data)
+    packet_length = len(payload)
+    packet_format = '!4sII{}s'.format(packet_length)
+    return struct.pack(packet_format, magic_code, packet_type, packet_length, payload)
+
+
+
 class GearmanException(Exception):
     pass
 
@@ -70,36 +102,7 @@ class GearmanException(Exception):
 class GearmanManager(object):
 
     def __init__(self, hosts):
-        self.hosts = self.parse_hosts(hosts)
-
-    def parse_hosts(self, hosts):
-        result = []
-        for host in hosts:
-            gearman_address, gearman_port = None, None
-            try:
-                gearman_address = host.get('host')
-                gearman_port = host.get('port')
-            except (AttributeError, KeyError):
-                pass
-            if gearman_address is None:
-                try:
-                    gearman_address, gearman_port = host
-                except (TypeError, ValueError):
-                    pass
-            if gearman_address is None:
-                try:
-                    gearman_address, _, gearman_port = host.partition(':')
-                except AttributeError:
-                    pass
-            result.append((gearman_address, int(gearman_port or GEARMAN_PORT)))
-        return result
-
-    def create_packet(self, packet_type, packet_data, is_response=False):
-        magic_code = MAGIC_CODE_RES if is_response else MAGIC_CODE_REQ
-        payload = NULL_BYTE.join(packet_data)
-        packet_length = len(payload)
-        packet_format = '!4sII{}s'.format(packet_length)
-        return struct.pack(packet_format, magic_code, packet_type, packet_length, payload)
+        self.hosts = parse_hosts(hosts)
 
 
 class GearmanClient(GearmanManager):
@@ -110,7 +113,7 @@ class GearmanClient(GearmanManager):
 
         unique_id = b''
         packet_data = [task_name.encode('ascii'), unique_id, task_data]
-        packet = self.create_packet(SUBMIT_JOB_PACKET_TYPES[priority, background], packet_data)
+        packet = create_packet(SUBMIT_JOB_PACKET_TYPES[priority, background], packet_data)
 
     def get_status(self):
         pass
