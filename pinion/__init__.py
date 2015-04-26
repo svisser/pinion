@@ -100,9 +100,9 @@ class GearmanManager(object):
 
 class GearmanClient(GearmanManager):
 
-    def submit_job(self, task, task_data, priority=JOB_PRIORITY_NORMAL, background=False):
+    def submit_job(self, task_name, task_data, priority=JOB_PRIORITY_NORMAL, background=False):
         packet_type = SUBMIT_JOB_PACKET_TYPES[priority, background]
-        packet_data = [task.encode('ascii'), b'', task_data]
+        packet_data = [task_name.encode('ascii'), b'', task_data]
         packet = self.create_packet(packet_type, packet_data)
 
     def get_status(self):
