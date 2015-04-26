@@ -55,10 +55,9 @@ JOB_PRIORITY_HIGH = 2
 class GearmanManager(object):
 
     def __init__(self, hosts):
-        self.hosts = self._parse_hosts(hosts)
+        self.hosts = self.parse_hosts(hosts)
 
-    @staticmethod
-    def _parse_hosts(hosts):
+    def parse_hosts(self, hosts):
         result = []
         for host in hosts:
             gearman_address, gearman_port = None, None
