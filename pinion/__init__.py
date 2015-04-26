@@ -7,6 +7,8 @@ __email__ = 'simeonvisser@gmail.com'
 __license__ = 'Apache 2.0'
 __copyright__ = 'Copyright 2015 Simeon Visser'
 
+from pinion import compat
+
 NULL_BYTE = b'\x00'
 MAGIC_CODE_REQ = b'\x00REQ'
 MAGIC_CODE_RES = b'\x00RES'
@@ -87,6 +89,9 @@ def parse_hosts(hosts):
 
 
 def create_packet(packet_type, packet_data, is_response=False):
+    if not all(isinstance(item, compat.bytes_type) for item in packet_data):
+        raise GearmanException("Non-bytes element found in packet data")
+
     magic_code = MAGIC_CODE_RES if is_response else MAGIC_CODE_REQ
     payload = NULL_BYTE.join(packet_data)
     packet_length = len(payload)
