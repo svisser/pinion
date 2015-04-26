@@ -63,6 +63,10 @@ SUBMIT_JOB_PACKET_TYPES = {
 }
 
 
+class GearmanException(Exception):
+    pass
+
+
 class GearmanManager(object):
 
     def __init__(self, hosts):
@@ -101,10 +105,12 @@ class GearmanManager(object):
 class GearmanClient(GearmanManager):
 
     def submit_job(self, task_name, task_data, priority=JOB_PRIORITY_NORMAL, background=False):
-        packet_type = SUBMIT_JOB_PACKET_TYPES[priority, background]
+        if NULL_BYTE in task_data:
+            raise GearmanException("Job data contains NULL byte")
+
         unique_id = b''
         packet_data = [task_name.encode('ascii'), unique_id, task_data]
-        packet = self.create_packet(packet_type, packet_data)
+        packet = self.create_packet(SUBMIT_JOB_PACKET_TYPES[priority, background], packet_data)
 
     def get_status(self):
         pass
