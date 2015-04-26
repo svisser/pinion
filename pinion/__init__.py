@@ -49,7 +49,7 @@ PACKET_TYPE_SUBMIT_JOB_LOW_BG = 34
 PACKET_TYPE_SUBMIT_JOB_SCHED = 35
 PACKET_TYPE_SUBMIT_JOB_EPOCH = 36
 
-GEARMAN_PORT = 4730
+DEFAULT_GEARMAN_PORT = 4730
 
 JOB_PRIORITY_NORMAL = 0
 JOB_PRIORITY_LOW = 1
@@ -84,7 +84,10 @@ def parse_hosts(hosts):
                 gearman_address, _, gearman_port = host.partition(':')
             except AttributeError:
                 pass
-        result.append({'host': gearman_address, 'port': int(gearman_port or GEARMAN_PORT)})
+        result.append({
+            'host': gearman_address,
+            'port': int(gearman_port or DEFAULT_GEARMAN_PORT)
+        })
     return result
 
 
