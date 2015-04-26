@@ -85,7 +85,7 @@ class GearmanManager(object):
 
 class GearmanClient(GearmanManager):
 
-    def submit_job(self, task, priority=JOB_PRIORITY_NORMAL, background=False):
+    def submit_job(self, task, task_data, priority=JOB_PRIORITY_NORMAL, background=False):
         pass
 
     def get_status(self):
