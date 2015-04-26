@@ -1,3 +1,5 @@
+import struct
+
 __title__ = 'pinion'
 __version__ = '0.0.1'
 __author__ = 'Simeon Visser'
@@ -51,6 +53,15 @@ JOB_PRIORITY_NORMAL = 0
 JOB_PRIORITY_LOW = 1
 JOB_PRIORITY_HIGH = 2
 
+SUBMIT_JOB_PACKET_TYPES = {
+    (True, JOB_PRIORITY_LOW): PACKET_TYPE_SUBMIT_JOB_LOW_BG,
+    (True, JOB_PRIORITY_NORMAL): PACKET_TYPE_SUBMIT_JOB_BG,
+    (True, JOB_PRIORITY_HIGH): PACKET_TYPE_SUBMIT_JOB_HIGH_BG,
+    (False, JOB_PRIORITY_LOW): PACKET_TYPE_SUBMIT_JOB_LOW,
+    (False, JOB_PRIORITY_NORMAL): PACKET_TYPE_SUBMIT_JOB,
+    (False, JOB_PRIORITY_HIGH): PACKET_TYPE_SUBMIT_JOB_HIGH,
+}
+
 
 class GearmanManager(object):
 
@@ -79,11 +90,20 @@ class GearmanManager(object):
             result.append((gearman_address, int(gearman_port or GEARMAN_PORT)))
         return result
 
+    def create_packet(self, packet_type, packet_data, is_response=False):
+        magic_code = MAGIC_CODE_RES if is_response else MAGIC_CODE_REQ
+        payload = NULL_BYTE.join(packet_data)
+        packet_length = len(payload)
+        packet_format = '!4sII{}s'.format(packet_length)
+        return struct.pack(packet_format, magic_code, packet_type, packet_length, payload)
+
 
 class GearmanClient(GearmanManager):
 
     def submit_job(self, task, task_data, priority=JOB_PRIORITY_NORMAL, background=False):
-        pass
+        packet_type = SUBMIT_JOB_PACKET_TYPES[priority, background]
+        packet_data = [task.encode('ascii'), b'', task_data]
+        packet = self.create_packet(packet_type, packet_data)
 
     def get_status(self):
         pass
