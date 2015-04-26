@@ -47,6 +47,10 @@ PACKET_TYPE_SUBMIT_JOB_EPOCH = 36
 
 GEARMAN_PORT = 4730
 
+JOB_PRIORITY_NORMAL = 0
+JOB_PRIORITY_LOW = 1
+JOB_PRIORITY_HIGH = 2
+
 
 class GearmanManager(object):
 
@@ -74,11 +78,55 @@ class GearmanManager(object):
 
 
 class GearmanClient(GearmanManager):
-    pass
+
+    def submit_job(self, task, priority=JOB_PRIORITY_NORMAL, background=False):
+        pass
+
+    def get_status(self):
+        pass
+
+    def set_connection_option(self):
+        pass
 
 
 class GearmanWorker(GearmanManager):
-    pass
+
+    def register_task(self, task, task_handler, timeout=None):
+        pass
+
+    def unregister_task(self, task):
+        pass
+
+    def reset_abilities(self):
+        pass
+
+    def sleep(self):
+        pass
+
+    def request_job(self, unique=False):
+        pass
+
+    def send_work_data(self, job, data):
+        pass
+
+    def send_work_warning(self, job, data):
+        pass
+
+    def send_work_status(self, job, numerator, denominator):
+        pass
+
+    def send_work_complete(self, job, data):
+        pass
+
+    def send_work_fail(self, job):
+        pass
+
+    def send_work_exception(self, job, data):
+        pass
+
+    def set_client_id(self, client_id):
+        pass
+
 
 
 class GearmanConnection(object):
